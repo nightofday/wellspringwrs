@@ -1,6 +1,22 @@
+// CustomersListSearchComponent.tsx
 import { KTIcon } from "../../../../_metronic/helpers";
+import React, { useState } from "react";
 
-const CustomersListSearchComponent = () => {
+interface CustomersListSearchProps {
+  onSearch: (searchTerm: string) => void;
+}
+
+const CustomersListSearchComponent: React.FC<CustomersListSearchProps> = ({
+  onSearch,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    onSearch(term);
+  };
+
   return (
     <div className="card-title">
       {/* begin::Search */}
@@ -8,10 +24,10 @@ const CustomersListSearchComponent = () => {
         <KTIcon iconName="magnifier" className="fs-1 position-absolute ms-6" />
         <input
           type="text"
-          data-kt-user-table-filter="search"
-          className="form-control form-control-solid w-250px ps-14"
+          className="form-control form-control-solid w-300px ps-14"
           placeholder="Search Customer"
-          value=""
+          value={searchTerm}
+          onChange={handleInputChange}
         />
       </div>
       {/* end::Search */}

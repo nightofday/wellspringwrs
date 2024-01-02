@@ -94,7 +94,7 @@ app.get("/api/customers", (req, res) => {
       res.send(results);
     });
   } else {
-    const sql = "SELECT * FROM customers";
+    const sql = "SELECT * FROM customers order by Name";
     db.query(sql, (err, results) => {
       if (err) throw err;
       res.send(results);
@@ -112,7 +112,7 @@ app.post("/api/customers", (req, res) => {
     Phone: req.body.phone,
     Points: 0,
     BorrowedContainers: 0,
-    IsActive: 1,
+    IsActive: 0,
     Notes: req.body.notes,
     CustomerType: req.body.customerType,
   };

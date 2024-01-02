@@ -1,12 +1,18 @@
+// CustomersListToolbar.tsx
 import { KTIcon } from "../../../../_metronic/helpers";
-import { AddCustomersModal } from "../modals/create/AddCustomersModal";
+import React from "react";
+import { AddCustomersModal } from "../components/create/AddCustomersModal";
 import { CustomersListFilter } from "./CustomersListFilter";
 import { CustomersListSearchComponent } from "./CustomersListSearch";
 
-function CustomersListToolbar() {
+interface CustomersListToolbarProps {
+  onSearch: (searchTerm: string) => void;
+}
+
+function CustomersListToolbar({ onSearch }: CustomersListToolbarProps) {
   return (
     <div className="card-header border-0 pt-6">
-      <CustomersListSearchComponent />
+      <CustomersListSearchComponent onSearch={onSearch} />
       <div className="card-toolbar">
         <div
           className="d-flex justify-content-end"
