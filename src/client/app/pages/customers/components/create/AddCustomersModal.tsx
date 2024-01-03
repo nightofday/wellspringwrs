@@ -5,7 +5,11 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import Swal from "sweetalert2";
 
-function AddCustomersModal() {
+interface AddCustomersModalProps {
+  reloadTable: () => void;
+}
+
+function AddCustomersModal({ reloadTable }: AddCustomersModalProps) {
   // State for customer data
   const [customer, setCustomer] = useState({
     name: "",
@@ -77,14 +81,22 @@ function AddCustomersModal() {
         await axios.post("http://localhost:3000/api/customers", values);
 
         // Show success message and reload page
+
+        const closeButton = document.querySelector(
+          '.modal .btn[data-bs-dismiss="modal"]'
+        );
+        (closeButton as HTMLButtonElement).click();
         Swal.fire({
           icon: "success",
           title: "Success!",
           text: "Customer added successfully",
           confirmButtonText: "OK, Got it!",
           confirmButtonColor: "#3085d6",
-        }).then(() => {
-          window.location.reload();
+        }).then((result) => {
+          if (result.isConfirmed && closeButton) {
+            reloadTable();
+            formik.resetForm();
+          }
         });
       } catch (error) {
         // Show error message and log error

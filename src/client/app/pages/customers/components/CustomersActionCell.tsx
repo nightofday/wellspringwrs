@@ -1,6 +1,31 @@
+import React, { useEffect, useState } from "react";
 import { KTIcon } from "../../../../_metronic/helpers";
+import EditCustomerModal from "./edit/EditCustomerModal";
+import { MenuComponent } from "../../../../_metronic/assets/ts/components";
 
-function CustomersActionCell() {
+interface CustomersActionCellProps {
+  CustomerID: number;
+  reloadTable: () => void;
+}
+
+const CustomersActionCell: React.FC<CustomersActionCellProps> = ({
+  CustomerID,
+  reloadTable,
+}) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  useEffect(() => {
+    MenuComponent.reinitialization();
+  }, []);
+
   return (
     <>
       <a
@@ -19,7 +44,9 @@ function CustomersActionCell() {
       >
         {/* begin::Menu item */}
         <div className="menu-item px-3">
-          <a className="menu-link px-3">Edit</a>
+          <a href="#" className="menu-link px-3" onClick={openModal}>
+            Edit
+          </a>
         </div>
         {/* end::Menu item */}
 
@@ -32,9 +59,16 @@ function CustomersActionCell() {
         {/* end::Menu item */}
       </div>
 
-      {/* end::Menu */}
+      {/* Modal outside of the dropdown */}
+      {isModalOpen && (
+        <EditCustomerModal
+          onClose={closeModal}
+          CustomerID={CustomerID}
+          reloadTable={reloadTable}
+        />
+      )}
     </>
   );
-}
+};
 
 export default CustomersActionCell;

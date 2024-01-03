@@ -9,12 +9,14 @@ interface CustomersListToolbarProps {
   onSearch: (searchTerm: string) => void;
   onDelete: () => void;
   selectedCount: number;
+  reloadTable: () => void;
 }
 
 function CustomersListToolbar({
   onSearch,
   onDelete,
   selectedCount,
+  reloadTable,
 }: CustomersListToolbarProps) {
   const isCheckboxSelected = selectedCount > 0;
 
@@ -38,7 +40,9 @@ function CustomersListToolbar({
           {/* end::Export */}
 
           {/* begin::Add Customer */}
-          {!isCheckboxSelected && <AddCustomersModal />}
+          {!isCheckboxSelected && (
+            <AddCustomersModal reloadTable={reloadTable} />
+          )}
           {/* end::Add Customer */}
 
           {/* begin::Delete */}

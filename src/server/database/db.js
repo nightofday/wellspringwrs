@@ -6,6 +6,7 @@ import fileUpload from "express-fileupload";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import e from "express";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -102,6 +103,25 @@ app.get("/api/customers", (req, res) => {
   }
 });
 
+// New route to handle specific customer by ID
+app.get("/api/customers/:id", (req, res) => {
+  const customerId = req.params.id;
+
+  const sql = "SELECT * FROM customers WHERE CustomerID = ?";
+  db.query(sql, [customerId], (err, result) => {
+    if (err) {
+      console.error("Error fetching customer by ID:", err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      if (result.length > 0) {
+        res.status(200).send(result[0]);
+      } else {
+        res.status(404).send("Customer not found");
+      }
+    }
+  });
+});
+
 // API endpoint to post customers
 app.post("/api/customers", (req, res) => {
   const sql = "INSERT INTO customers SET ?";
@@ -138,6 +158,36 @@ app.delete("/api/customers", (req, res) => {
 
   const sql = "DELETE FROM customers WHERE CustomerID IN (?)";
   db.query(sql, [customerIds], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    res.send(results);
+  });
+});
+
+app.patch("/api/customers/:CustomerId", (req, res) => {
+  const customerId = req.params.CustomerId; // Corrected to match the parameter case
+  const values = req.body;
+
+  const sql =
+    "UPDATE customers SET Name=?, Email=?, Address=?, Phone=?, Points=?, BorrowedContainers=?, IsActive=?, Notes=?, CustomerType=?, Photo=? WHERE CustomerID = ?";
+  const updatedValues = [
+    values.name,
+    values.email,
+    values.address,
+    values.phone,
+    values.points,
+    values.borrowedContainers,
+    values.isActive,
+    values.notes,
+    values.customerType,
+    values.photo || null, // Use null if photo is not provided
+    customerId,
+  ];
+
+  db.query(sql, updatedValues, (err, results) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: "Internal server error" });

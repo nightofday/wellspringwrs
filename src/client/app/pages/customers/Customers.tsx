@@ -26,6 +26,22 @@ interface Customer {
 
 const Customers = () => {
   // State variables
+  //handles the table data changed
+  const [tableDataChanged, setTableDataChanged] = useState<boolean>(false);
+  const reloadTable = () => {
+    setTableDataChanged((prev) => !prev);
+  };
+
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => {
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
   // handles the customers data
   const [customers, setCustomers] = useState<Customer[]>([]);
   // handles the filtered customers
@@ -79,7 +95,7 @@ const Customers = () => {
         setFilteredCustomers(data); // Set filteredCustomers initially with all customers
       })
       .catch((error) => console.error("Error:", error));
-  }, []);
+  }, [tableDataChanged]); // Add tableDataChanged as a dependency
 
   // Function to handle delete of selected customers
   const handleDelete = async () => {
@@ -121,9 +137,12 @@ const Customers = () => {
         const updatedCustomers = customers.filter(
           (customer) => !selectedCustomers.includes(customer.CustomerID)
         );
+
+        reloadTable();
         setCustomers(updatedCustomers);
         setFilteredCustomers(updatedCustomers);
         setSelectedCustomers([]);
+        setIsHeaderCheckboxChecked(false);
         // Display success message based on the number of selected customers
         const successMessage =
           selectedCustomers.length === 1
@@ -183,6 +202,7 @@ const Customers = () => {
         onSearch={handleSearch}
         onDelete={handleDelete}
         selectedCount={selectedCustomers.length}
+        reloadTable={reloadTable}
       />
 
       <KTCardBody className="py-4">
@@ -279,7 +299,10 @@ const Customers = () => {
                     <td>{customer.Points}</td>
                     <td>{customer.Notes}</td>
                     <td>
-                      <CustomersActionCell />
+                      <CustomersActionCell
+                        CustomerID={customer.CustomerID}
+                        reloadTable={reloadTable}
+                      />
                     </td>
                   </tr>
                 ))

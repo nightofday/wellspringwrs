@@ -45,7 +45,7 @@ const CustomersListPagination: React.FC<CustomersListPaginationProps> = ({
   const noRowsToDisplay = totalRows === 0 || endRange === 0;
 
   return (
-    <div className="row">
+    <div className="row mt-5">
       <div className="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
         {/* You can add some content here if needed */}
       </div>
