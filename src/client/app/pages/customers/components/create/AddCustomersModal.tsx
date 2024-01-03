@@ -82,6 +82,7 @@ function AddCustomersModal() {
           title: "Success!",
           text: "Customer added successfully",
           confirmButtonText: "OK, Got it!",
+          confirmButtonColor: "#3085d6",
         }).then(() => {
           window.location.reload();
         });
@@ -92,6 +93,7 @@ function AddCustomersModal() {
           title: "Error!",
           text: "Something went wrong",
           confirmButtonText: "OK, Got it!",
+          confirmButtonColor: "#3085d6",
         });
         console.error("Error adding customer", error);
       }

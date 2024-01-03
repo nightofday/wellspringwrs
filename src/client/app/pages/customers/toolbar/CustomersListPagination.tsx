@@ -80,7 +80,7 @@ const CustomersListPagination: React.FC<CustomersListPaginationProps> = ({
       {/* Show the range information only if there are rows to display */}
       {!noRowsToDisplay && (
         <div className="col-md-12 text-center mt-3 text-gray-800">
-          Showing {startRange} - {endRange} out of {totalRows} rows
+          Showing {startRange} - {endRange} out of {totalRows} Customers
         </div>
       )}
     </div>

@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { KTCard, KTCardBody, toAbsoluteUrl } from "../../../_metronic/helpers";
+import {
+  KTCard,
+  KTCardBody,
+  KTIcon,
+  toAbsoluteUrl,
+} from "../../../_metronic/helpers";
 import { CustomersListToolbar } from "./toolbar/CustomersListToolBar";
 import { CustomersListPagination } from "./toolbar/CustomersListPagination";
+import CustomersActionCell from "./components/CustomersActionCell";
+import Swal from "sweetalert2";
 
 interface Customer {
   CustomerID: number;
@@ -19,10 +26,49 @@ interface Customer {
 
 const Customers = () => {
   // State variables
-  const [customers, setCustomers] = useState<Customer[]>([]); // All customers
-  const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]); // Customers to display on the current page
-  const [currentPage, setCurrentPage] = useState<number>(1); // Set the initial current page to 1
-  const pageSize = 10; // Set the desired page size
+  // handles the customers data
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  // handles the filtered customers
+  const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 10;
+  //handles the selected customers for deletion
+  const [selectedCustomers, setSelectedCustomers] = useState<number[]>([]);
+  const [isHeaderCheckboxChecked, setIsHeaderCheckboxChecked] =
+    useState<boolean>(false);
+  // Function to handle checkbox selection and update selectedCustomers
+  const handleCheckboxChange = (customerId: number) => {
+    if (customerId === 0) {
+      // Header checkbox selected
+      setIsHeaderCheckboxChecked(!isHeaderCheckboxChecked);
+
+      if (!isHeaderCheckboxChecked) {
+        // If the header checkbox is checked, select checkboxes only on the current page
+        const currentPageCustomerIds = displayedCustomers.map(
+          (customer) => customer.CustomerID
+        );
+        setSelectedCustomers(currentPageCustomerIds);
+      } else {
+        // If the header checkbox is unchecked, clear all selected checkboxes
+        setSelectedCustomers([]);
+      }
+    } else {
+      // Individual checkbox selected
+      if (selectedCustomers.includes(customerId)) {
+        setSelectedCustomers((prevSelected) =>
+          prevSelected.filter((id) => id !== customerId)
+        );
+      } else {
+        setSelectedCustomers((prevSelected) => [...prevSelected, customerId]);
+      }
+
+      // Check if all checkboxes on the current page are selected when an individual checkbox is selected
+      const allSelectedOnPage = displayedCustomers.every((customer) =>
+        selectedCustomers.includes(customer.CustomerID)
+      );
+      setIsHeaderCheckboxChecked(allSelectedOnPage);
+    }
+  };
 
   // Fetch customers data from API
   useEffect(() => {
@@ -34,6 +80,76 @@ const Customers = () => {
       })
       .catch((error) => console.error("Error:", error));
   }, []);
+
+  // Function to handle delete of selected customers
+  const handleDelete = async () => {
+    try {
+      // Ensure there are selected customers to delete
+      if (selectedCustomers.length === 0) {
+        return;
+      }
+
+      // Show confirmation dialog
+      const confirmed = await Swal.fire({
+        title: "Are you sure?",
+        text: `You are about to delete ${selectedCustomers.length} ${
+          selectedCustomers.length === 1 ? "customer" : "customers"
+        }. Do you want to proceed?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+
+      if (!confirmed.isConfirmed) {
+        return; // User canceled the deletion
+      }
+
+      // Send a DELETE request to the server
+      const response = await fetch("http://localhost:3000/api/customers", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ customerIds: selectedCustomers }),
+      });
+
+      // Check if the deletion was successful (you may need to adjust based on your API response format)
+      if (response.ok) {
+        // Update local state after successful deletion
+        const updatedCustomers = customers.filter(
+          (customer) => !selectedCustomers.includes(customer.CustomerID)
+        );
+        setCustomers(updatedCustomers);
+        setFilteredCustomers(updatedCustomers);
+        setSelectedCustomers([]);
+        // Display success message based on the number of selected customers
+        const successMessage =
+          selectedCustomers.length === 1
+            ? `${
+                customers.find(
+                  (customer) => customer.CustomerID === selectedCustomers[0]
+                )?.Name
+              } deleted successfully!`
+            : `${selectedCustomers.length} customers deleted successfully!`;
+
+        Swal.fire({
+          title: "Success",
+          text: successMessage,
+          icon: "success",
+          confirmButtonText: "OK, Got it!",
+          confirmButtonColor: "#3085d6",
+        });
+      } else {
+        // Handle error scenario (display an error message, etc.)
+        console.error("Error deleting customers:", response.statusText);
+      }
+    } catch (error) {
+      // Handle any unexpected errors
+      console.error("Error:", error);
+    }
+  };
 
   // Handle search functionality
   const handleSearch = (searchTerm: string) => {
@@ -63,7 +179,11 @@ const Customers = () => {
   return (
     <KTCard>
       {/* Customers list toolbar */}
-      <CustomersListToolbar onSearch={handleSearch} />
+      <CustomersListToolbar
+        onSearch={handleSearch}
+        onDelete={handleDelete}
+        selectedCount={selectedCustomers.length}
+      />
 
       <KTCardBody className="py-4">
         <div className="table-responsive">
@@ -77,16 +197,19 @@ const Customers = () => {
                       type="checkbox"
                       data-kt-check=""
                       data-kt-check-target="#kt_table_users .form-check-input"
+                      checked={isHeaderCheckboxChecked}
+                      onChange={() => handleCheckboxChange(0)} // Pass 0 for header checkbox
                     />
                   </div>
                 </th>
                 <th className="min-w-125px">Name</th>
                 <th className="min-w-125px">Email</th>
                 <th className="min-w-125px">Borrowed Containers</th>
-                <th className="min-w-125px">Notes</th>
                 <th className="min-w-125px">Active</th>
                 <th className="min-w-125px">Customer Type</th>
                 <th className="min-w-125px">Points</th>
+                <th className="min-w-125px">Notes</th>
+                <th className="min-w-125px">Action</th>
               </tr>
             </thead>
             <tbody className="text-gray-600 fw-bold">
@@ -98,7 +221,13 @@ const Customers = () => {
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          value="1"
+                          value={customer.CustomerID}
+                          checked={selectedCustomers.includes(
+                            customer.CustomerID
+                          )}
+                          onChange={() =>
+                            handleCheckboxChange(customer.CustomerID)
+                          }
                         />
                       </div>
                     </td>
@@ -137,7 +266,6 @@ const Customers = () => {
                     </td>
                     <td>{customer.Email}</td>
                     <td>{customer.BorrowedContainers}</td>
-                    <td>{customer.Notes}</td>
                     <td>
                       <span
                         className={`badge ${
@@ -149,6 +277,10 @@ const Customers = () => {
                     </td>
                     <td>{customer.CustomerType}</td>
                     <td>{customer.Points}</td>
+                    <td>{customer.Notes}</td>
+                    <td>
+                      <CustomersActionCell />
+                    </td>
                   </tr>
                 ))
               ) : (

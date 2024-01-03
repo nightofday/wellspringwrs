@@ -112,7 +112,7 @@ app.post("/api/customers", (req, res) => {
     Phone: req.body.phone,
     Points: 0,
     BorrowedContainers: 0,
-    IsActive: 0,
+    IsActive: 1,
     Notes: req.body.notes,
     CustomerType: req.body.customerType,
   };
@@ -122,6 +122,27 @@ app.post("/api/customers", (req, res) => {
 
   db.query(sql, customer, (err, results) => {
     if (err) throw err;
+    res.send(results);
+  });
+});
+
+// API endpoint to delete customers
+app.delete("/api/customers", (req, res) => {
+  const { customerIds } = req.body;
+
+  if (!customerIds || !Array.isArray(customerIds) || customerIds.length === 0) {
+    return res
+      .status(400)
+      .json({ error: "Invalid or empty customerIds array" });
+  }
+
+  const sql = "DELETE FROM customers WHERE CustomerID IN (?)";
+  db.query(sql, [customerIds], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
     res.send(results);
   });
 });

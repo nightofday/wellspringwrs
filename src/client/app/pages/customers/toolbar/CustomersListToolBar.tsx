@@ -1,15 +1,23 @@
 // CustomersListToolbar.tsx
 import { KTIcon } from "../../../../_metronic/helpers";
-import React from "react";
 import { AddCustomersModal } from "../components/create/AddCustomersModal";
 import { CustomersListFilter } from "./CustomersListFilter";
 import { CustomersListSearchComponent } from "./CustomersListSearch";
+import DeleteCustomers from "../components/delete/DeleteCustomers";
 
 interface CustomersListToolbarProps {
   onSearch: (searchTerm: string) => void;
+  onDelete: () => void;
+  selectedCount: number;
 }
 
-function CustomersListToolbar({ onSearch }: CustomersListToolbarProps) {
+function CustomersListToolbar({
+  onSearch,
+  onDelete,
+  selectedCount,
+}: CustomersListToolbarProps) {
+  const isCheckboxSelected = selectedCount > 0;
+
   return (
     <div className="card-header border-0 pt-6">
       <CustomersListSearchComponent onSearch={onSearch} />
@@ -18,18 +26,29 @@ function CustomersListToolbar({ onSearch }: CustomersListToolbarProps) {
           className="d-flex justify-content-end"
           data-kt-user-table-toolbar="base"
         >
-          <CustomersListFilter />
+          {!isCheckboxSelected && <CustomersListFilter />}
 
           {/* begin::Export */}
-          <button type="button" className="btn btn-light-primary me-3">
-            <KTIcon iconName="exit-up" className="fs-2" />
-            Export
-          </button>
+          {!isCheckboxSelected && (
+            <button type="button" className="btn btn-light-primary me-3">
+              <KTIcon iconName="exit-up" className="fs-2" />
+              Export
+            </button>
+          )}
           {/* end::Export */}
 
           {/* begin::Add Customer */}
-          <AddCustomersModal />
+          {!isCheckboxSelected && <AddCustomersModal />}
           {/* end::Add Customer */}
+
+          {/* begin::Delete */}
+          {isCheckboxSelected && (
+            <DeleteCustomers
+              onDelete={onDelete}
+              selectedCount={selectedCount}
+            />
+          )}
+          {/* end::Delete */}
         </div>
       </div>
     </div>
