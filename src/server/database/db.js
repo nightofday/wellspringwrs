@@ -167,8 +167,25 @@ app.delete("/api/customers", (req, res) => {
   });
 });
 
+//api endpoint to delete single customer
+app.delete("/api/customers/:id", (req, res) => {
+  const customerId = req.params.id;
+
+  const sql = "DELETE FROM customers WHERE CustomerID = ?";
+  db.query(sql, [customerId], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    res.send(results);
+  });
+});
+
+// API endpoint to update customers
+
 app.patch("/api/customers/:CustomerId", (req, res) => {
-  const customerId = req.params.CustomerId; // Corrected to match the parameter case
+  const customerId = req.params.CustomerId;
   const values = req.body;
 
   const sql =
@@ -179,21 +196,23 @@ app.patch("/api/customers/:CustomerId", (req, res) => {
     values.address,
     values.phone,
     values.points,
-    values.borrowedContainers,
-    values.isActive,
+    values.borrowedcontainers,
+    values.isactive,
     values.notes,
     values.customerType,
-    values.photo || null, // Use null if photo is not provided
+    values.photo || null,
     customerId,
   ];
 
   db.query(sql, updatedValues, (err, results) => {
     if (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Internal server error" });
+      console.error("Database error:", err);
+      return res
+        .status(500)
+        .json({ error: "Internal server error", details: err.message });
     }
 
-    res.send(results);
+    res.json({ success: true, message: "Customer updated successfully" });
   });
 });
 

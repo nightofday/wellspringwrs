@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { KTIcon } from "../../../../_metronic/helpers";
 import EditCustomerModal from "./edit/EditCustomerModal";
 import { MenuComponent } from "../../../../_metronic/assets/ts/components";
+import DeleteSingleCustomer from "./delete/DeleteSingleCustomer";
 
 interface CustomersActionCellProps {
   CustomerID: number;
@@ -52,9 +53,10 @@ const CustomersActionCell: React.FC<CustomersActionCellProps> = ({
 
         {/* begin::Menu item */}
         <div className="menu-item px-3">
-          <a className="menu-link px-3" data-kt-users-table-filter="delete_row">
-            Delete
-          </a>
+          <DeleteSingleCustomer
+            CustomerID={CustomerID}
+            reloadTable={reloadTable}
+          />
         </div>
         {/* end::Menu item */}
       </div>

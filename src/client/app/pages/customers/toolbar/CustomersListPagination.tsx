@@ -41,6 +41,18 @@ const CustomersListPagination: React.FC<CustomersListPaginationProps> = ({
   const startRange = (currentPage - 1) * pageSize + 1;
   const endRange = Math.min(currentPage * pageSize, totalRows);
 
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      onPageChange(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      onPageChange(currentPage + 1);
+    }
+  };
+
   // Check if there are no rows to display
   const noRowsToDisplay = totalRows === 0 || endRange === 0;
 
@@ -50,36 +62,27 @@ const CustomersListPagination: React.FC<CustomersListPaginationProps> = ({
         {/* You can add some content here if needed */}
       </div>
       <div className="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end">
-        <div id="kt_table_users_paginate">
-          <ul className="pagination">
-            {/* Render "First" button if currentPage is greater than 1 */}
-            {currentPage > 1 && (
-              <a
-                className="page-link fw-bold me-5"
-                onClick={() => onPageChange(1)}
-                style={{ cursor: "pointer" }}
-              >
-                First
-              </a>
-            )}
-            {/* Render page numbers */}
-            {renderPageNumbers()}
-            {/* Render "Last" button if currentPage is less than totalPages */}
-            {currentPage < totalPages && (
-              <a
-                className="page-link fw-bold me-5"
-                onClick={() => onPageChange(totalPages)}
-                style={{ cursor: "pointer" }}
-              >
-                Last
-              </a>
-            )}
-          </ul>
-        </div>
+        <ul className="pagination">
+          <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+            <a href="#" className="page-link" onClick={handlePreviousPage}>
+              <i className="previous"></i>
+            </a>
+          </li>
+          {renderPageNumbers()}
+          <li
+            className={`page-item ${
+              currentPage === totalPages ? "disabled" : ""
+            }`}
+          >
+            <a href="#" className="page-link" onClick={handleNextPage}>
+              <i className="next"></i>
+            </a>
+          </li>
+        </ul>
       </div>
       {/* Show the range information only if there are rows to display */}
       {!noRowsToDisplay && (
-        <div className="col-md-12 text-center mt-3 text-gray-800">
+        <div className="col-md-12 text-end mt-3 text-gray-800 fw-bold">
           Showing {startRange} - {endRange} out of {totalRows} Customers
         </div>
       )}
