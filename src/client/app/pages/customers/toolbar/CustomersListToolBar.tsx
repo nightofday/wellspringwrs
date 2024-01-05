@@ -10,6 +10,7 @@ interface CustomersListToolbarProps {
   onDelete: () => void;
   selectedCount: number;
   reloadTable: () => void;
+  handleFilter: (IsActive: number | null, CustomerType: string) => void;
 }
 
 function CustomersListToolbar({
@@ -17,6 +18,7 @@ function CustomersListToolbar({
   onDelete,
   selectedCount,
   reloadTable,
+  handleFilter,
 }: CustomersListToolbarProps) {
   const isCheckboxSelected = selectedCount > 0;
 
@@ -28,7 +30,9 @@ function CustomersListToolbar({
           className="d-flex justify-content-end"
           data-kt-user-table-toolbar="base"
         >
-          {!isCheckboxSelected && <CustomersListFilter />}
+          {!isCheckboxSelected && (
+            <CustomersListFilter handleFilter={handleFilter} />
+          )}
 
           {/* begin::Export */}
           {!isCheckboxSelected && (

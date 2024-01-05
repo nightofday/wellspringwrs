@@ -15,6 +15,7 @@ const CustomersListSearchComponent: React.FC<CustomersListSearchProps> = ({
     const term = e.target.value;
     setSearchTerm(term);
     onSearch(term);
+    console.log("Search term:", term);
   };
 
   return (

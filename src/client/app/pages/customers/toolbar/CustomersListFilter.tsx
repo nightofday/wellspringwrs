@@ -1,5 +1,26 @@
+import { useState } from "react";
 import { initialQueryState, KTIcon } from "../../../../_metronic/helpers";
-const CustomersListFilter = () => {
+
+interface CustomersListFilterProps {
+  handleFilter: (IsActive: number | null, CustomerType: string) => void;
+}
+function CustomersListFilter({ handleFilter }: CustomersListFilterProps) {
+  const [status, setStatus] = useState("");
+  const [customerType, setCustomerType] = useState("");
+
+  const applyFilter = () => {
+    let isActive: number | null = null;
+
+    if (status === "1") {
+      isActive = 1;
+    } else if (status === "0") {
+      isActive = 0;
+    }
+
+    // Call the parent component's handleFilter function with the selected options
+    handleFilter(isActive, customerType);
+  };
+
   return (
     <>
       {/* begin::Filter Button */}
@@ -35,15 +56,17 @@ const CustomersListFilter = () => {
             <label className="form-label fs-6 fw-bold">Status</label>
             <select
               className="form-select form-select-solid fw-bolder"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
               data-kt-select2="true"
               data-placeholder="Select option"
               data-allow-clear="true"
               data-kt-user-table-filter="role"
               data-hide-search="true"
             >
-              <option value=""></option>
-              <option value="Administrator">Active</option>
-              <option value="Analyst">Inactive</option>
+              <option value="">All</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
             </select>
           </div>
           {/* end::Input group */}
@@ -53,15 +76,17 @@ const CustomersListFilter = () => {
             <label className="form-label fs-6 fw-bold">Customer Type</label>
             <select
               className="form-select form-select-solid fw-bolder"
+              value={customerType}
+              onChange={(e) => setCustomerType(e.target.value)}
               data-kt-select2="true"
               data-placeholder="Select option"
               data-allow-clear="true"
               data-kt-user-table-filter="role"
               data-hide-search="true"
             >
-              <option value=""></option>
-              <option value="Administrator">Reseller</option>
-              <option value="Analyst">Walk-In</option>
+              <option value="">All</option>
+              <option value="Reseller">Reseller</option>
+              <option value="Walk-in">Walk-in</option>
             </select>
           </div>
           {/* end::Input group */}
@@ -73,6 +98,11 @@ const CustomersListFilter = () => {
               className="btn btn-light btn-active-light-primary fw-bold me-2 px-6"
               data-kt-menu-dismiss="true"
               data-kt-user-table-filter="reset"
+              onClick={() => {
+                // Reset filter options
+                setStatus("");
+                setCustomerType("");
+              }}
             >
               Reset
             </button>
@@ -80,6 +110,7 @@ const CustomersListFilter = () => {
               className="btn btn-primary fw-bold px-6"
               data-kt-menu-dismiss="true"
               data-kt-user-table-filter="filter"
+              onClick={applyFilter}
             >
               Apply
             </button>
@@ -91,6 +122,6 @@ const CustomersListFilter = () => {
       {/* end::SubMenu */}
     </>
   );
-};
+}
 
 export { CustomersListFilter };

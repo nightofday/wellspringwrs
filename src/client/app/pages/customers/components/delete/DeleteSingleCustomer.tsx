@@ -3,12 +3,14 @@ import Swal from "sweetalert2";
 
 interface DeleteSingleCustomerProps {
   CustomerID: number;
+  Name: string;
   reloadTable: () => void;
 }
 
 function DeleteSingleCustomer({
   CustomerID,
   reloadTable,
+  Name,
 }: DeleteSingleCustomerProps) {
   const onDeleteCustomer = () => {
     const deleteCustomer = async () => {
@@ -26,8 +28,8 @@ function DeleteSingleCustomer({
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
           cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!",
-          cancelButtonText: "No, cancel!",
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
         }).then(async function (result) {
           if (result.value) {
             const response = await axios.delete(
@@ -39,7 +41,7 @@ function DeleteSingleCustomer({
             reloadTable();
             Swal.fire({
               title: "Success!",
-              text: `${name} deleted successfully!`,
+              text: `${Name} deleted successfully!`,
               icon: "success",
               showCancelButton: false,
               confirmButtonText: "OK",

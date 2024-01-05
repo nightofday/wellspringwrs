@@ -6,12 +6,14 @@ import DeleteSingleCustomer from "./delete/DeleteSingleCustomer";
 
 interface CustomersActionCellProps {
   CustomerID: number;
+  Name: string;
   reloadTable: () => void;
 }
 
 const CustomersActionCell: React.FC<CustomersActionCellProps> = ({
   CustomerID,
   reloadTable,
+  Name,
 }) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -56,6 +58,7 @@ const CustomersActionCell: React.FC<CustomersActionCellProps> = ({
           <DeleteSingleCustomer
             CustomerID={CustomerID}
             reloadTable={reloadTable}
+            Name={Name}
           />
         </div>
         {/* end::Menu item */}

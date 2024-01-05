@@ -42,9 +42,9 @@ const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
     points: 0,
     borrowedcontainers: 0,
   });
+
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  // Validation schema for formik
   const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     phone: Yup.string()
@@ -54,7 +54,7 @@ const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
         "Invalid phone number format. Only digits and optional leading '+' are allowed."
       ),
     address: Yup.string().required("Address is required"),
-    email: Yup.string().email("Invalid email format"), // Make email optional
+    email: Yup.string().email("Invalid email format"),
     customerType: Yup.string().required("Customer Type is required"),
   });
 
@@ -62,9 +62,7 @@ const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
     initialValues: customer,
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      console.log("Form values:", values);
       try {
-        // Show confirmation dialog
         const confirmed = await Swal.fire({
           title: "Are you sure?",
           text: `Are you sure you want to update ${values.name}?`,
@@ -75,55 +73,39 @@ const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
           confirmButtonText: "Yes, update it!",
         });
 
-        if (!confirmed.isConfirmed) {
-          return; // User canceled the deletion
-        }
-        console.log("CustomerPhoto:", customer.Photo);
-        console.log("CustomerPhoto:", values.photo);
-        // Image upload logic
+        if (!confirmed.isConfirmed) return;
+        console.log(values.photo);
         if (values.photo !== customer.Photo) {
           const formData = new FormData();
           formData.append("photo", values.photo);
           const response = await axios.post(
             "http://localhost:3000/api/upload",
             formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
+            { headers: { "Content-Type": "multipart/form-data" } }
           );
 
-          // Assuming your server responds with the image path
           const imagePath = response.data.path;
-
-          // Save the image path in the values object
           values.photo = imagePath;
         }
-        console.log("CustomerPhoto:", values.isactive);
 
         const response = await fetch(
           `http://localhost:3000/api/customers/${CustomerID}`,
           {
             method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(values),
           }
         );
 
         const data = await response.json();
-        console.log("Data:", data);
+
         Swal.fire({
           title: "Success!",
           text: `${values.name} updated successfully!`,
           icon: "success",
           showCancelButton: false,
           confirmButtonText: "OK",
-          customClass: {
-            confirmButton: "btn btn-primary",
-          },
+          customClass: { confirmButton: "btn btn-primary" },
         });
       } catch (error) {
         console.error("Error updating customer:", error);
@@ -133,14 +115,9 @@ const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
           icon: "error",
           showCancelButton: false,
           confirmButtonText: "OK",
-          customClass: {
-            confirmButton: "btn btn-primary",
-          },
+          customClass: { confirmButton: "btn btn-primary" },
         });
       }
-      // Add your logic to handle the form submission
-      // You may want to call an API to update the customer data
-      // Once the update is successful, close the modal
       onClose();
       reloadTable();
       setPreviewImage(null);
@@ -148,19 +125,14 @@ const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
   });
 
   useEffect(() => {
-    // Fetch customer data based on CustomerID
-    console.log("Effect triggered with CustomerID:", CustomerID);
     const fetchData = async () => {
-      let data;
       try {
-        // Replace the URL with your API endpoint
         const response = await fetch(
           `http://localhost:3000/api/customers/${CustomerID}`
         );
 
-        data = await response.json();
+        const data = await response.json();
 
-        // Set form values
         formik.setValues({
           name: data.Name,
           email: data.Email,
@@ -173,41 +145,34 @@ const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
           points: data.Points,
           borrowedcontainers: data.BorrowedContainers,
         });
-        // Update the local state with the fetched data
+
         setCustomer(data);
 
-        // Set the preview image
-        if (data.Photo !== null && data.Photo.trim() !== "") {
-          setPreviewImage(toAbsoluteUrl(`media/${data.Photo}`));
-        } else {
-          setPreviewImage("media/svg/avatars/blank.svg");
-        }
-
-        console.log("Data:", data.IsActive);
+        setPreviewImage(
+          data.Photo !== null && data.Photo.trim() !== ""
+            ? toAbsoluteUrl(`media/${data.Photo}`)
+            : "media/svg/avatars/blank.svg"
+        );
       } catch (error) {
         console.error("Error fetching customer data:", error);
       }
     };
 
-    // Call the fetchData function
     fetchData();
   }, [CustomerID]);
 
-  // Handle image change event
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
 
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
+      reader.onloadend = () => setPreviewImage(reader.result as string);
       reader.readAsDataURL(file);
 
-      formik.setFieldValue("photo", file); // Set the image file in formik values
+      formik.setFieldValue("photo", file);
     } else {
       setPreviewImage("media/svg/avatars/blank.svg");
-      formik.setFieldValue("photo", null); // Set the image file in formik values
+      formik.setFieldValue("photo", null);
     }
   };
 
@@ -344,22 +309,35 @@ const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                           <option value="Walk-in">Walk-in</option>
                         </select>
                       ) : field.type === "checkbox" ? (
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          name={field.name}
-                          onChange={(e) => {
-                            formik.handleChange(e);
-                            formik.setFieldValue(
-                              field.name,
-                              !formik.values[
-                                field.name as keyof typeof formik.values
-                              ]
-                            );
-                          }}
-                          onBlur={formik.handleBlur}
-                          checked={field.checked}
-                        />
+                        <div className="form-check form-switch form-check-custom form-check-solid">
+                          <input
+                            type="checkbox"
+                            className="form-check-input mt-3"
+                            name={field.name}
+                            onChange={(e) => {
+                              formik.handleChange(e);
+                              formik.setFieldValue(
+                                field.name,
+                                !formik.values[
+                                  field.name as keyof typeof formik.values
+                                ]
+                              );
+                            }}
+                            onBlur={formik.handleBlur}
+                            checked={field.checked}
+                          />
+                          <label className="form-check-label mt-3">
+                            <span
+                              className={`badge ms-2 ${
+                                formik.values.isactive
+                                  ? "badge-success"
+                                  : "badge-danger"
+                              }`}
+                            >
+                              {formik.values.isactive ? "Active" : "Inactive"}
+                            </span>
+                          </label>
+                        </div>
                       ) : (
                         <input
                           type={field.type}

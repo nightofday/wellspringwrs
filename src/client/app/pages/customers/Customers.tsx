@@ -19,7 +19,7 @@ interface Customer {
   BorrowedContainers: string;
   Notes: string;
   Photo: string;
-  IsActive: boolean;
+  IsActive: number | null;
   CustomerType: string;
   Points: number;
 }
@@ -46,6 +46,9 @@ const Customers = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   // handles the filtered customers
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
+  const [filteredCustomersTemp, setFilteredCustomersTemp] = useState<
+    Customer[]
+  >([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 10;
   //handles the selected customers for deletion
@@ -170,10 +173,34 @@ const Customers = () => {
     }
   };
 
+  // Function to handle filter
+  // Function to handle filter
+  const handleFilter = (IsActive: number | null, CustomerType: string) => {
+    console.log("Isactive:", IsActive);
+    const filtered = customers.filter((customer) => {
+      // Filter based on IsActive
+      const isActiveFilter =
+        IsActive !== null ? customer.IsActive === +IsActive : true;
+
+      // Filter based on CustomerType
+      const customerTypeFilter = CustomerType
+        ? customer.CustomerType === CustomerType
+        : true;
+
+      // Combine the filters
+      return isActiveFilter && customerTypeFilter;
+    });
+    console.log(filtered);
+
+    setFilteredCustomersTemp(filtered);
+    setFilteredCustomers(filtered);
+    setCurrentPage(1); // Reset to the first page after filter
+  };
+
   // Handle search functionality
   const handleSearch = (searchTerm: string) => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    const filtered = customers.filter(
+    const filteredSearch = filteredCustomersTemp.filter(
       (customer) =>
         customer.Name.toLowerCase().includes(lowerCaseSearchTerm) ||
         customer.Email.toLowerCase().includes(lowerCaseSearchTerm) ||
@@ -181,7 +208,7 @@ const Customers = () => {
         customer.CustomerType.toLowerCase().includes(lowerCaseSearchTerm)
     );
 
-    setFilteredCustomers(filtered);
+    setFilteredCustomers(filteredSearch);
     setCurrentPage(1); // Reset to the first page after search
   };
 
@@ -201,6 +228,7 @@ const Customers = () => {
       <CustomersListToolbar
         onSearch={handleSearch}
         onDelete={handleDelete}
+        handleFilter={handleFilter}
         selectedCount={selectedCustomers.length}
         reloadTable={reloadTable}
       />
@@ -302,6 +330,7 @@ const Customers = () => {
                       <CustomersActionCell
                         CustomerID={customer.CustomerID}
                         reloadTable={reloadTable}
+                        Name={customer.Name}
                       />
                     </td>
                   </tr>
