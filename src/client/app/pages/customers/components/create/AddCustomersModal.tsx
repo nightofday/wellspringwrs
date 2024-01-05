@@ -153,6 +153,7 @@ function AddCustomersModal({ reloadTable }: AddCustomersModalProps) {
               <div
                 className="btn btn-icon btn-sm btn-active-light-primary ms-2"
                 data-bs-dismiss="modal"
+                onClick={() => formik.resetForm()}
                 aria-label="Close"
               >
                 <KTSVG
@@ -224,6 +225,7 @@ function AddCustomersModal({ reloadTable }: AddCustomersModalProps) {
                     label: "Customer Type",
                     name: "customerType",
                     type: "select",
+                    required: true,
                   },
                 ].map((field) => (
                   <div className="row mb-6" key={field.name}>

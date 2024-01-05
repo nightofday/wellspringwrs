@@ -8,6 +8,7 @@ import { WithChildren } from "../../_metronic/helpers";
 import Customers from "../pages/customers/Customers";
 import Orders from "../pages/orders/Orders";
 import Products from "../pages/products/Products";
+import CustomerProfile from "../pages/customers/components/profile/CustomerProfile";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -28,6 +29,14 @@ const PrivateRoutes = () => {
           element={
             <SuspensedView>
               <ProfilePage />
+            </SuspensedView>
+          }
+        />
+        <Route
+          path="customers/profile*"
+          element={
+            <SuspensedView>
+              <CustomerProfile />
             </SuspensedView>
           }
         />

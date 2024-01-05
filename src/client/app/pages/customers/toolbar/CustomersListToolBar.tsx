@@ -4,6 +4,7 @@ import { AddCustomersModal } from "../components/create/AddCustomersModal";
 import { CustomersListFilter } from "./CustomersListFilter";
 import { CustomersListSearchComponent } from "./CustomersListSearch";
 import DeleteCustomers from "../components/delete/DeleteCustomers";
+import CustomersListExport from "./CustomersListExport";
 
 interface CustomersListToolbarProps {
   onSearch: (searchTerm: string) => void;
@@ -11,6 +12,7 @@ interface CustomersListToolbarProps {
   selectedCount: number;
   reloadTable: () => void;
   handleFilter: (IsActive: number | null, CustomerType: string) => void;
+  filteredCustomers: any;
 }
 
 function CustomersListToolbar({
@@ -19,6 +21,7 @@ function CustomersListToolbar({
   selectedCount,
   reloadTable,
   handleFilter,
+  filteredCustomers,
 }: CustomersListToolbarProps) {
   const isCheckboxSelected = selectedCount > 0;
 
@@ -36,10 +39,7 @@ function CustomersListToolbar({
 
           {/* begin::Export */}
           {!isCheckboxSelected && (
-            <button type="button" className="btn btn-light-primary me-3">
-              <KTIcon iconName="exit-up" className="fs-2" />
-              Export
-            </button>
+            <CustomersListExport filteredCustomers={filteredCustomers} />
           )}
           {/* end::Export */}
 

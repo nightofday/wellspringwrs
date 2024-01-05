@@ -9,6 +9,7 @@ import { CustomersListToolbar } from "./toolbar/CustomersListToolBar";
 import { CustomersListPagination } from "./toolbar/CustomersListPagination";
 import CustomersActionCell from "./components/CustomersActionCell";
 import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 
 interface Customer {
   CustomerID: number;
@@ -231,6 +232,7 @@ const Customers = () => {
         handleFilter={handleFilter}
         selectedCount={selectedCustomers.length}
         reloadTable={reloadTable}
+        filteredCustomers={filteredCustomers}
       />
 
       <KTCardBody className="py-4">
@@ -282,7 +284,7 @@ const Customers = () => {
                     <td>
                       <div className="d-flex align-items-center">
                         <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                          <a href="#">
+                          <Link to={`/customers/profile`}>
                             {customer.Photo ? (
                               <div className="symbol-label">
                                 <img
@@ -299,15 +301,15 @@ const Customers = () => {
                                   .join("")}
                               </div>
                             )}
-                          </a>
+                          </Link>
                         </div>
                         <div className="d-flex flex-column">
-                          <a
-                            href="#"
+                          <Link
+                            to={`/customers/profile`}
                             className="text-gray-800 text-hover-primary mb-1"
                           >
                             {customer.Name}
-                          </a>
+                          </Link>
                           <span>{customer.Phone}</span>
                         </div>
                       </div>

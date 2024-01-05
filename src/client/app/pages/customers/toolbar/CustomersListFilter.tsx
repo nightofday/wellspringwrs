@@ -96,10 +96,8 @@ function CustomersListFilter({ handleFilter }: CustomersListFilterProps) {
             <button
               type="button"
               className="btn btn-light btn-active-light-primary fw-bold me-2 px-6"
-              data-kt-menu-dismiss="true"
               data-kt-user-table-filter="reset"
               onClick={() => {
-                // Reset filter options
                 setStatus("");
                 setCustomerType("");
               }}

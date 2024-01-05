@@ -246,9 +246,10 @@ const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
                     label: "Customer Type",
                     name: "customerType",
                     type: "select",
+                    required: true,
                   },
                   {
-                    label: "Is Active",
+                    label: "Customer Status",
                     name: "isactive",
                     type: "checkbox",
                     checked: formik.values.isactive,
