@@ -33,13 +33,38 @@ const PrivateRoutes = () => {
           }
         />
         <Route
-          path="customers/profile*"
+          path="customers/profile/overview*"
           element={
             <SuspensedView>
               <CustomerProfile />
             </SuspensedView>
           }
         />
+        <Route
+          path="customers/profile/empty-containers*"
+          element={
+            <SuspensedView>
+              <CustomerProfile />
+            </SuspensedView>
+          }
+        />
+        <Route
+          path="customers/profile/customerorders*"
+          element={
+            <SuspensedView>
+              <CustomerProfile />
+            </SuspensedView>
+          }
+        />
+        <Route
+          path="customers/profile/notes*"
+          element={
+            <SuspensedView>
+              <CustomerProfile />
+            </SuspensedView>
+          }
+        />
+
         {/* Page Not Found */}
         <Route path="*" element={<Navigate to="/error/404" />} />
       </Route>

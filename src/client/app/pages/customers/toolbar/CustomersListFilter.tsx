@@ -36,7 +36,7 @@ function CustomersListFilter({ handleFilter }: CustomersListFilterProps) {
       {/* end::Filter Button */}
       {/* begin::SubMenu */}
       <div
-        className="menu menu-sub menu-sub-dropdown w-300px w-md-325px"
+        className="menu menu-sub menu-sub-dropdown w-250px w-md-275px"
         data-kt-menu="true"
       >
         {/* begin::Header */}

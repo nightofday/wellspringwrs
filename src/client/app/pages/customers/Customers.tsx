@@ -284,7 +284,7 @@ const Customers = () => {
                     <td>
                       <div className="d-flex align-items-center">
                         <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                          <Link to={`/customers/profile`}>
+                          <Link to={`/customers/profile/overview`}>
                             {customer.Photo ? (
                               <div className="symbol-label">
                                 <img
@@ -305,7 +305,7 @@ const Customers = () => {
                         </div>
                         <div className="d-flex flex-column">
                           <Link
-                            to={`/customers/profile`}
+                            to={`/customers/profile/overview`}
                             className="text-gray-800 text-hover-primary mb-1"
                           >
                             {customer.Name}

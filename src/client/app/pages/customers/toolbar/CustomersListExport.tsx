@@ -41,7 +41,7 @@ function CustomersListExport({ filteredCustomers }: CustomersListExportProps) {
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.target = "_blank";
-    link.download = "dummy.csv";
+    link.download = "Customers.csv";
     link.click();
     3;
 
