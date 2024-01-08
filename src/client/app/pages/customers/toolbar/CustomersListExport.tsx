@@ -28,7 +28,7 @@ function CustomersListExport({ filteredCustomers }: CustomersListExportProps) {
       Phone: customer.Phone,
       Email: customer.Email,
       Address: customer.Address,
-      CustomerStatus: customer.IsActive,
+      CustomerStatus: customer.IsActive ? "Active" : "Inactive",
       CustomerPoints: customer.Points,
       BorrowedContainers: customer.BorrowedContainers,
       Notes: customer.Notes,

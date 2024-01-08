@@ -4,6 +4,7 @@ import Notes from "./Notes";
 import { KTCard, KTCardBody } from "../../../../../_metronic/helpers";
 import EmptyContainers from "./EmptyContainers";
 import Overview from "./Overview";
+import BorrowedContainers from "./BorrowedContainers";
 
 function CustomerProfile() {
   return (
@@ -71,7 +72,7 @@ function CustomerProfile() {
                     data-kt-menu-placement="bottom-end"
                     data-kt-menu-flip="top-end"
                   >
-                    <i className="ki-duotone ki-plus fs-2"></i> ADD
+                    <i className="ki-duotone ki-plus fs-2"></i> Add
                     <div
                       className="menu menu-sub menu-sub-dropdown mt-4 py-3 px-5"
                       data-kt-menu="true"
@@ -187,9 +188,9 @@ function CustomerProfile() {
                   className={
                     `nav-link text-active-primary me-6 ` +
                     (location.pathname ===
-                      "/customers/profile/empty-containers" && "active")
+                      "/customers/profile/borrowed-containers" && "active")
                   }
-                  to="/customers/profile/empty-containers"
+                  to="/customers/profile/borrowed-containers"
                 >
                   Borrowed Containers
                 </Link>
@@ -204,6 +205,18 @@ function CustomerProfile() {
                   to="/customers/profile/customerorders"
                 >
                   Orders
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link
+                  className={
+                    `nav-link text-active-primary me-6 ` +
+                    (location.pathname === "/customers/profile/rewards" &&
+                      "active")
+                  }
+                  to="/customers/profile/rewards"
+                >
+                  Rewards
                 </Link>
               </li>
               <li className="nav-item">
@@ -225,8 +238,11 @@ function CustomerProfile() {
             {location.pathname === "/customers/profile/overview" && (
               <Overview />
             )}
-            {location.pathname === "/customers/profile/emptycontainers" && (
+            {location.pathname === "/customers/profile/empty-containers" && (
               <EmptyContainers />
+            )}
+            {location.pathname === "/customers/profile/borrowed-containers" && (
+              <BorrowedContainers />
             )}
             {location.pathname === "/customers/profile/customerorders" && (
               <Orders />

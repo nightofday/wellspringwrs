@@ -1,4 +1,4 @@
-function EmptyContainers() {
+function BorrowedContainers() {
   return (
     <>
       <div className="card my-5 my-xl-8 ">
@@ -69,4 +69,4 @@ function EmptyContainers() {
   );
 }
 
-export default EmptyContainers;
+export default BorrowedContainers;

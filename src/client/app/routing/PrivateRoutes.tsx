@@ -49,6 +49,14 @@ const PrivateRoutes = () => {
           }
         />
         <Route
+          path="customers/profile/borrowed-containers*"
+          element={
+            <SuspensedView>
+              <CustomerProfile />
+            </SuspensedView>
+          }
+        />
+        <Route
           path="customers/profile/customerorders*"
           element={
             <SuspensedView>

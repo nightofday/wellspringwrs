@@ -4,9 +4,7 @@ function Overview() {
       <div className="card-body pt-3 ">
         <div className="d-flex align-items-center justify-content-between my-5">
           <h3 className="card-title align-items-start flex-column">
-            <span className="card-label fw-bold fs-3 mb-1">
-              Transaction History
-            </span>
+            <span className="card-label fw-bold fs-3 mb-1">Transactions</span>
             <br />
             <span className="text-muted fw-semibold fs-7">Yesterday</span>
           </h3>
@@ -32,7 +30,7 @@ function Overview() {
           </div>
         </div>
         {/* begin::Timeline */}
-        <div className="fw-bold text-gray-800 fs-6 mb-2">01/08/2021</div>
+        <div className="fw-bold text-gray-800 fs-6 mb-5">01/08/2021</div>
         <div className="timeline-label">
           {/* begin::Item */}
 

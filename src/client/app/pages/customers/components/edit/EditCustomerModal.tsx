@@ -75,6 +75,7 @@ const EditCustomerModal: React.FC<EditCustomerModalProps> = ({
 
         if (!confirmed.isConfirmed) return;
         console.log(values.photo);
+        console.log(customer.Photo);
         if (values.photo !== customer.Photo) {
           const formData = new FormData();
           formData.append("photo", values.photo);

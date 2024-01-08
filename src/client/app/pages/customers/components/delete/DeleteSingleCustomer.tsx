@@ -23,7 +23,7 @@ function DeleteSingleCustomer({
 
         Swal.fire({
           title: "Are you sure?",
-          text: "You are about to delete this customer!",
+          text: `You are about to delete, ${Name}. This action cannot be undone`,
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#3085d6",
