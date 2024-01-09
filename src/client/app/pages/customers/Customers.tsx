@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  KTCard,
-  KTCardBody,
-  KTIcon,
-  toAbsoluteUrl,
-} from "../../../_metronic/helpers";
+import { KTCard, KTCardBody, toAbsoluteUrl } from "../../../_metronic/helpers";
 import { CustomersListToolbar } from "./toolbar/CustomersListToolBar";
 import { CustomersListPagination } from "./toolbar/CustomersListPagination";
 import CustomersActionCell from "./components/CustomersActionCell";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
+import { deleteCustomers, fetchCustomers } from "../../../../server/api";
 
 interface Customer {
   CustomerID: number;
@@ -92,8 +88,7 @@ const Customers = () => {
 
   // Fetch customers data from API
   useEffect(() => {
-    fetch("http://localhost:3000/api/customers")
-      .then((response) => response.json())
+    fetchCustomers()
       .then((data: Customer[]) => {
         setCustomers(data);
         setFilteredCustomers(data); // Set filteredCustomers initially with all customers
@@ -126,48 +121,37 @@ const Customers = () => {
         return; // User canceled the deletion
       }
 
-      // Send a DELETE request to the server
-      const response = await fetch("http://localhost:3000/api/customers", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ customerIds: selectedCustomers }),
+      // Use the global deleteCustomers function for deletion
+      await deleteCustomers(selectedCustomers.map(String));
+
+      // Update local state after successful deletion
+      const updatedCustomers = customers.filter(
+        (customer) => !selectedCustomers.includes(customer.CustomerID)
+      );
+
+      reloadTable();
+      setCustomers(updatedCustomers);
+      setFilteredCustomers(updatedCustomers);
+      setSelectedCustomers([]);
+      setIsHeaderCheckboxChecked(false);
+
+      // Display success message based on the number of selected customers
+      const successMessage =
+        selectedCustomers.length === 1
+          ? `${
+              customers.find(
+                (customer) => customer.CustomerID === selectedCustomers[0]
+              )?.Name
+            } deleted successfully!`
+          : `${selectedCustomers.length} customers deleted successfully!`;
+
+      Swal.fire({
+        title: "Success",
+        text: successMessage,
+        icon: "success",
+        confirmButtonText: "OK, Got it!",
+        confirmButtonColor: "#3085d6",
       });
-
-      // Check if the deletion was successful (you may need to adjust based on your API response format)
-      if (response.ok) {
-        // Update local state after successful deletion
-        const updatedCustomers = customers.filter(
-          (customer) => !selectedCustomers.includes(customer.CustomerID)
-        );
-
-        reloadTable();
-        setCustomers(updatedCustomers);
-        setFilteredCustomers(updatedCustomers);
-        setSelectedCustomers([]);
-        setIsHeaderCheckboxChecked(false);
-        // Display success message based on the number of selected customers
-        const successMessage =
-          selectedCustomers.length === 1
-            ? `${
-                customers.find(
-                  (customer) => customer.CustomerID === selectedCustomers[0]
-                )?.Name
-              } deleted successfully!`
-            : `${selectedCustomers.length} customers deleted successfully!`;
-
-        Swal.fire({
-          title: "Success",
-          text: successMessage,
-          icon: "success",
-          confirmButtonText: "OK, Got it!",
-          confirmButtonColor: "#3085d6",
-        });
-      } else {
-        // Handle error scenario (display an error message, etc.)
-        console.error("Error deleting customers:", response.statusText);
-      }
     } catch (error) {
       // Handle any unexpected errors
       console.error("Error:", error);
@@ -284,7 +268,9 @@ const Customers = () => {
                     <td>
                       <div className="d-flex align-items-center">
                         <div className="symbol symbol-circle symbol-50px overflow-hidden me-3">
-                          <Link to={`/customers/profile/overview`}>
+                          <Link
+                            to={`/customers/profile/overview?id=${customer.CustomerID}`}
+                          >
                             {customer.Photo ? (
                               <div className="symbol-label">
                                 <img
@@ -305,7 +291,7 @@ const Customers = () => {
                         </div>
                         <div className="d-flex flex-column">
                           <Link
-                            to={`/customers/profile/overview`}
+                            to={`/customers/profile/overview?id=${customer.CustomerID}`}
                             className="text-gray-800 text-hover-primary mb-1"
                           >
                             {customer.Name}

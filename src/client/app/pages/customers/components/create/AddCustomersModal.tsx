@@ -29,7 +29,9 @@ function AddCustomersModal({ reloadTable }: AddCustomersModalProps) {
       .matches(
         /^\+?[0-9]*$/,
         "Invalid phone number format. Only digits and optional leading '+' are allowed."
-      ),
+      )
+      .min(10, "Phone number must be at least 10 digits long"),
+
     address: Yup.string().required("Address is required"),
     email: Yup.string().email("Invalid email format"), // Make email optional
     customerType: Yup.string().required("Customer Type is required"),

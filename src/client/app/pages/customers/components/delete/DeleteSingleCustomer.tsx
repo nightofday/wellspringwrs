@@ -1,5 +1,5 @@
-import axios from "axios";
 import Swal from "sweetalert2";
+import { deleteCustomerById } from "../../../../../../server/api";
 
 interface DeleteSingleCustomerProps {
   CustomerID: number;
@@ -12,63 +12,45 @@ function DeleteSingleCustomer({
   reloadTable,
   Name,
 }: DeleteSingleCustomerProps) {
-  const onDeleteCustomer = () => {
-    const deleteCustomer = async () => {
-      try {
-        //fetch customer data
-        const getCustomerResponse = await axios.get(
-          `http://localhost:3000/api/customers/${CustomerID}`
-        );
-        console.log(getCustomerResponse);
-
-        Swal.fire({
-          title: "Are you sure?",
-          text: `You are about to delete, ${Name}. This action cannot be undone`,
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Delete",
-          cancelButtonText: "Cancel",
-        }).then(async function (result) {
-          if (result.value) {
-            const response = await axios.delete(
-              `http://localhost:3000/api/customers/${CustomerID}`
-            );
-            console.log(response);
-            const getname = response.data;
-            const name = getname.data;
-            reloadTable();
-            Swal.fire({
-              title: "Success!",
-              text: `${Name} deleted successfully!`,
-              icon: "success",
-              showCancelButton: false,
-              confirmButtonText: "OK",
-              confirmButtonColor: "#3085d6",
-              cancelButtonColor: "#d33",
-            });
-          } else if (result.dismiss === Swal.DismissReason.cancel) {
-            Swal.fire({
-              title: "Cancelled!",
-              icon: "error",
-              text: `Customer was not deleted!`,
-              showCancelButton: false,
-              confirmButtonText: "OK",
-              confirmButtonColor: "#3085d6",
-              cancelButtonColor: "#d33",
-            });
-          }
-        });
-
-        // 💡 use axios.delete instead of axios.post
-
-        reloadTable();
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    deleteCustomer();
+  const onDeleteCustomer = async () => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: `You are about to delete, ${Name}. This action cannot be undone`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Delete",
+        cancelButtonText: "Cancel",
+      }).then(async function (result) {
+        if (result.value) {
+          await deleteCustomerById(CustomerID.toString());
+          reloadTable();
+          Swal.fire({
+            title: "Success!",
+            text: `${Name} deleted successfully!`,
+            icon: "success",
+            showCancelButton: false,
+            confirmButtonText: "OK",
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          Swal.fire({
+            title: "Cancelled!",
+            icon: "error",
+            text: `Customer was not deleted!`,
+            showCancelButton: false,
+            confirmButtonText: "OK",
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+          });
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -83,4 +65,5 @@ function DeleteSingleCustomer({
     </>
   );
 }
+
 export default DeleteSingleCustomer;
